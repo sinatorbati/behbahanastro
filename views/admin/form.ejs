@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= (mode === 'create' ? 'مقاله جدید' : 'ویرایش مقاله') %></title>
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    body { 
+      font-family: system-ui, Arial, sans-serif; 
+      max-width: 1400px; 
+      margin: 1rem auto; 
+      padding: 0 1rem; 
+      direction: rtl; 
+      background: #f8fafc;
+      min-height: 100vh;
+    }
+    
+    header { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      margin-bottom: 1.5rem; 
+      background: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid #e5e7eb;
+    }
+    
+    nav a { 
+      margin-left: 1rem; 
+      margin-right: 0; 
+      transition: all 0.2s ease;
+    }
+    
+    nav a:hover {
+      transform: translateY(-2px);
+    }
+    
+    .btn { 
+      background: #4f46e5; 
+      color: #fff; 
+      border: 0; 
+      padding: .75rem 1.25rem; 
+      cursor: pointer; 
+      border-radius: 8px; 
+      text-decoration: none; 
+      display: inline-block; 
+      box-shadow: 0 6px 16px rgba(79,70,229,.2);
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79,70,229,.3);
+    }
+    
+    .btn.secondary { background: #64748b; }
+    .btn.secondary:hover { background: #475569; }
+    
+    .btn.danger { background: #ef4444; }
+    .btn.danger:hover { background: #dc2626; }
+    
+    .img-preview { 
+      max-height: 120px; 
+      border: 2px solid #e5e7eb; 
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+    
+    .img-preview:hover {
+      border-color: #4f46e5;
+      transform: scale(1.02);
+    }
+    
+    main.card { 
+      background: #fff; 
+      border: 1px solid #e5e7eb; 
+      border-radius: 16px; 
+      padding: 2rem; 
+      box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+    }
+
+    .admin-article-form { display: block; }
+    
+    .form-grid { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 24px; 
+    }
+    
+    .form-row { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 24px; 
+    }
+    
+    .field { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+    }
+    
+    .field label { 
+      font-weight: 700; 
+      color: #0f172a; 
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .field input[type=text] { 
+      border: 2px solid #e5e7eb; 
+      border-radius: 12px; 
+      padding: 16px 20px;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      background: #fafafa;
+    }
+    
+    .field input[type=text]:focus {
+      outline: none;
+      border-color: #4f46e5;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    
+    .field textarea {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      background: #fafafa;
+      resize: vertical;
+      min-height: 400px;
+      font-family: inherit;
+    }
+    
+    .field textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    
+    .field input[type=file] {
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      padding: 20px;
+      background: #f9fafb;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    
+    .field input[type=file]:hover {
+      border-color: #4f46e5;
+      background: #f0f9ff;
+    }
+    
+    .hint { 
+      color: #64748b; 
+      font-size: 13px; 
+      font-weight: 500;
+    }
+    
+    .preview-row { 
+      display: flex; 
+      gap: 12px; 
+      flex-wrap: wrap; 
+      margin-top: 12px; 
+    }
+    
+    .gallery-item { position: relative; }
+    .gallery-item .btn.danger { 
+      position: absolute; 
+      top: -8px; 
+      left: -8px; 
+      padding: 6px 10px; 
+      border-radius: 50%; 
+      font-size: 12px;
+    }
+    
+    .actions-row {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-start;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 2px solid #f1f5f9;
+    }
+    
+    .actions-row .btn {
+      padding: 16px 32px;
+      font-size: 16px;
+    }
+    
+    /* بهبود ادیتور */
+    .tox-tinymce {
+      border-radius: 12px !important;
+      border: 2px solid #e5e7eb !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    }
+    
+    .tox-tinymce:hover {
+      border-color: #4f46e5 !important;
+    }
+    
+    .tox-toolbar {
+      background: #f8fafc !important;
+      border-bottom: 1px solid #e5e7eb !important;
+    }
+    
+    .tox-tbtn {
+      border-radius: 6px !important;
+      margin: 2px !important;
+    }
+    
+    .tox-tbtn:hover {
+      background: #e0e7ff !important;
+    }
+    
+    .tox-edit-area {
+      background: #fff !important;
+    }
+    
+    /* بهبود بخش ادیتور */
+    .editor-container {
+      position: relative;
+      margin: 20px 0;
+    }
+    
+    .editor-container textarea {
+      min-height: 600px;
+    }
+    
+    /* بهبود TinyMCE */
+    .tox-tinymce {
+      min-height: 600px !important;
+      border: 3px solid #e5e7eb !important;
+      border-radius: 16px !important;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important;
+    }
+    
+    .tox-tinymce:hover {
+      border-color: #4f46e5 !important;
+      box-shadow: 0 15px 50px rgba(79,70,229,0.15) !important;
+    }
+    
+    .tox-toolbar {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+      border-bottom: 2px solid #e5e7eb !important;
+      padding: 8px !important;
+    }
+    
+    .tox-tbtn {
+      border-radius: 8px !important;
+      margin: 2px !important;
+      padding: 8px 12px !important;
+      font-weight: 600 !important;
+      transition: all 0.2s ease !important;
+    }
+    
+    .tox-tbtn:hover {
+      background: #4f46e5 !important;
+      color: #fff !important;
+      transform: translateY(-2px) !important;
+    }
+    
+    .tox-tbtn--enabled {
+      background: #4f46e5 !important;
+      color: #fff !important;
+    }
+    
+    .tox-edit-area {
+      background: #fff !important;
+      min-height: 550px !important;
+    }
+    
+    .tox-edit-area__iframe {
+      min-height: 550px !important;
+    }
+    
+    /* بهبود بخش کاور */
+    .current-cover {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+      margin-bottom: 16px;
+    }
+    
+    .cover-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .delete-cover-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ef4444;
+      cursor: pointer;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      transition: all 0.2s ease;
+    }
+    
+    .delete-cover-label:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+    
+    .delete-cover-label input[type="checkbox"] {
+      margin: 0;
+    }
+    
+    /* بهبود بخش آپلود فایل */
+    .file-upload-area {
+      position: relative;
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      padding: 24px;
+      background: #f9fafb;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    
+    .file-upload-area:hover {
+      border-color: #4f46e5;
+      background: #f0f9ff;
+    }
+    
+    .file-upload-area input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+      background: transparent;
+    }
+    
+    .upload-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+    }
+    
+    .upload-icon {
+      font-size: 24px;
+    }
+    
+    .upload-hint span:last-child {
+      font-weight: 500;
+    }
+    
+    /* بهبود preview */
+    .preview-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .preview-row img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid #e5e7eb;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) { 
+      body { max-width: 100%; padding: 0 0.5rem; }
+      main.card { padding: 1.5rem; }
+      .editor-container textarea { min-height: 400px; }
+    }
+    
+    @media (max-width: 768px) { 
+      .form-row { grid-template-columns: 1fr; }
+      header { flex-direction: column; gap: 1rem; text-align: center; }
+      nav { display: flex; flex-wrap: wrap; justify-content: center; }
+      .actions-row { flex-direction: column; }
+      .field input[type=text], .field textarea { padding: 12px 16px; }
+      .editor-container textarea { min-height: 300px; }
+      .current-cover { flex-direction: column; align-items: center; text-align: center; }
+      .file-upload-area { padding: 16px; }
+    }
+    
+    @media (max-width: 480px) {
+      body { padding: 0 0.25rem; }
+      main.card { padding: 1rem; }
+      .btn { padding: 12px 20px; font-size: 14px; }
+      .field input[type=text], .field textarea { padding: 10px 12px; font-size: 14px; }
+      .editor-container textarea { min-height: 250px; }
+      .preview-row { grid-template-columns: 1fr; }
+      .upload-hint span:last-child { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>پنل مدیریت انجمن</h1>
+    <nav>
+      <a href="/admin" class="btn secondary">پیشخوان</a>
+      <a href="/admin/articles/new" class="btn">مقاله جدید</a>
+      <a href="/admin/logout" class="btn danger">خروج</a>
+    </nav>
+  </header>
+  <main class="card">
+    <section>
+      <h2><%= (mode === 'create' ? 'ایجاد مقاله' : 'ویرایش مقاله') %></h2>
+      <div class="success-message" style="background: #f0f9ff; border: 1px solid #0ea5e9; color: #0c4a6e; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; display: none;" id="successMsg">
+        ✅ تنظیمات بهینه‌سازی شده - حالا می‌توانید مقالات طولانی بدون مشکل آپلود کنید!
+      </div>
+      <form class="admin-article-form" action="<%= action %>" method="POST" enctype="multipart/form-data">
+        <div class="form-grid">
+          <div class="form-row">
+            <div class="field">
+              <label>عنوان</label>
+              <input type="text" name="title" placeholder="عنوان مقاله را وارد کنید" value="<%= article ? article.title : '' %>" required />
+              <div class="hint"><span id="titleCount">0</span> کاراکتر</div>
+            </div>
+            <div class="field">
+              <label>خلاصه</label>
+              <input type="text" name="summary" placeholder="خلاصه کوتاه از مقاله" value="<%= article ? article.summary : '' %>" required />
+              <div class="hint"><span id="summaryCount">0</span> کاراکتر</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>نوع محتوا</label>
+              <select name="type" style="border:2px solid #e5e7eb;border-radius:12px;padding:12px 14px;background:#fafafa">
+                <option value="ARTICLE" <%= article && article.type === 'NEWS' ? '' : 'selected' %>>مقاله</option>
+                <option value="NEWS" <%= article && article.type === 'NEWS' ? 'selected' : '' %>>اخبار انجمن</option>
+              </select>
+              <div class="hint">انتخاب کنید این پست در کدام بخش نمایش داده شود</div>
+            </div>
+            <div class="field">
+              <label>نمایش در صفحه اصلی</label>
+              <label style="display:inline-flex;align-items:center;gap:8px">
+                <input type="checkbox" name="featured" value="1" <%= article && article.featured ? 'checked' : '' %> />
+                انتخاب به عنوان پست پیشنهادی (Featured)
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>محتوا</label>
+            <div class="editor-container">
+              <textarea id="contentEditor" name="content" rows="20" placeholder="محتوای مقاله را اینجا بنویسید..."><%= article ? article.content : '' %></textarea>
+            </div>
+            <div class="hint">💡 می‌توانید تصاویر را با کشیدن، paste کردن یا دکمه تصویر اضافه کنید</div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>عکس کاور</label>
+              <% if (article && article.image) { %>
+                <div class="current-cover">
+                  <img class="img-preview" src="/<%= article.image %>" alt="کاور فعلی" />
+                  <div class="cover-actions">
+                    <label class="delete-cover-label">
+                      <input type="checkbox" name="deleteCover" value="1" />
+                      <span>🗑️ حذف کاور فعلی</span>
+                  </label>
+                  </div>
+                </div>
+              <% } %>
+              <div class="file-upload-area">
+              <input id="coverInput" type="file" name="image" accept="image/*" />
+                <div class="upload-hint">
+                  <span class="upload-icon">📁</span>
+                  <span>برای تغییر کاور، فایل جدید انتخاب کنید</span>
+                </div>
+              </div>
+              <div id="coverPreview" class="preview-row"></div>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <button class="btn" type="submit"><%= (mode === 'create' ? 'ایجاد' : 'بروزرسانی') %></button>
+            <a class="btn secondary" href="/admin">انصراف</a>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tinymce-i18n/langs6/fa.js"></script>
+  <script>
+    tinymce.init({
+      selector: '#contentEditor',
+      language: 'fa',
+      directionality: 'rtl',
+      menubar: false,
+      branding: false,
+      plugins: 'lists link table code directionality paste image imagetools paste',
+      toolbar: 'undo redo | blocks | bold italic underline | alignright aligncenter alignleft | bullist numlist | link table | image | smartgallery | ltr rtl | removeformat | code',
+      image_advtab: true,
+      paste_data_images: true,
+      paste_enable_default_filters: false,
+      paste_retain_style_properties: 'color font-size font-family background-color',
+      paste_remove_styles_if_webkit: false,
+      content_style: 'body{font-family:"Vazirmatn",system-ui,Arial,sans-serif;line-height:2.2;color:#1f2937;font-size:16px;padding:24px;max-width:100%;margin:0 auto} h1,h2,h3,h4,h5,h6{color:#0f172a;margin:24px 0 12px;line-height:1.4} p{margin:0 0 16px} blockquote{border-right:4px solid #4f46e5;padding:16px 20px;background:#f8fafc;border-radius:12px;margin:20px 0;font-style:italic} img{max-width:100%;height:auto;border-radius:12px;border:2px solid #e5e7eb;box-shadow:0 8px 25px rgba(0,0,0,.08);margin:20px 0;display:block} figure.image{display:inline-block;margin:20px 0;padding:12px;background:#fff;border:2px solid #e5e7eb;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.05)} .smart-gallery{display:grid;gap:16px;margin:24px 0;padding:20px;background:#f8fafc;border-radius:20px;border:3px solid #e5e7eb;box-shadow:0 10px 30px rgba(0,0,0,.1);position:relative} .smart-gallery[data-count="1"]{grid-template-columns:1fr;max-width:600px;margin:24px auto} .smart-gallery[data-count="2"]{grid-template-columns:1fr 1fr} .smart-gallery[data-count="3"]{grid-template-columns:1fr 1fr 1fr} .smart-gallery[data-count="4"]{grid-template-columns:1fr 1fr 1fr 1fr} .smart-gallery[data-count="5"],.smart-gallery[data-count="6"],.smart-gallery[data-count="7"],.smart-gallery[data-count="8"],.smart-gallery[data-count="9"]{grid-template-columns:repeat(4,1fr)} .smart-gallery .gallery-item{position:relative;border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.12);transition:all 0.3s ease;cursor:pointer} .smart-gallery .gallery-item:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 15px 35px rgba(0,0,0,.2)} .smart-gallery .gallery-item img{width:100%;height:auto;object-fit:contain;margin:0;border:none;border-radius:0;box-shadow:none} .smart-gallery::before{content:"";display:none} ul,ol{margin:16px 0;padding-right:24px} li{margin:8px 0} table{width:100%;border-collapse:collapse;margin:20px 0;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden} th,td{border:1px solid #e5e7eb;padding:12px 16px;text-align:right} th{background:#f8fafc;font-weight:600} code{background:#f1f5f9;color:#0f172a;padding:4px 8px;border-radius:6px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace} pre{background:#0f172a;color:#e2e8f0;padding:20px;border-radius:12px;overflow-x:auto;margin:20px 0} pre code{background:transparent;padding:0}',
+      images_upload_handler: function (blobInfo, success, failure) {
+        const formData = new FormData();
+        formData.append('file', blobInfo.blob(), blobInfo.filename());
+        
+        // استفاده از XMLHttpRequest - سازگار با همه مرورگرها
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/admin/articles/editor-upload', true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              try {
+                const result = JSON.parse(xhr.responseText);
+                if (result.location) {
+                  success(result.location);
+                } else {
+                  failure('خطا در آپلود تصویر: پاسخ نامعتبر');
+                }
+              } catch (e) {
+                failure('خطا در پردازش پاسخ سرور');
+              }
+            } else if (xhr.status === 302 || xhr.status === 401) {
+              failure('لطفاً ابتدا وارد سیستم شوید');
+            } else {
+              failure('خطا در آپلود تصویر (کد: ' + xhr.status + ')');
+            }
+          }
+        };
+        
+        xhr.onerror = function() {
+          failure('خطا در اتصال به سرور');
+        };
+        
+        xhr.ontimeout = function() {
+          failure('زمان آپلود به پایان رسید');
+        };
+        
+        xhr.timeout = 30000; // 30 ثانیه timeout
+        xhr.send(formData);
+      },
+      automatic_uploads: false,
+      images_reuse_filename: false,
+      setup: (editor) => {
+        const form = document.querySelector('.admin-article-form');
+        if (form) {
+          form.addEventListener('submit', function(){
+            const ta = document.getElementById('contentEditor');
+            if (ta) ta.value = editor.getContent();
+          });
+        }
+        
+        // اضافه کردن دکمه گالری هوشمند
+        editor.ui.registry.addButton('smartgallery', {
+          text: '🖼️ گالری هوشمند',
+          tooltip: 'گالری خودکار با هر تعداد تصویر',
+          onAction: function() {
+            createSmartGallery(editor);
+          }
+        });
+        
+        // اضافه کردن handler برای paste تصاویر
+        editor.on('paste', function(e) {
+          const items = e.clipboardData.items;
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+              const file = items[i].getAsFile();
+              if (file) {
+                uploadImageFile(file, editor);
+                e.preventDefault();
+                return false;
+              }
+            }
+          }
+        });
+        
+        // اضافه کردن handler برای drag & drop
+        editor.on('drop', function(e) {
+          const files = e.dataTransfer.files;
+          for (let i = 0; i < files.length; i++) {
+            if (files[i].type.indexOf('image') !== -1) {
+              uploadImageFile(files[i], editor);
+              e.preventDefault();
+              return false;
+            }
+          }
+        });
+        
+        // اضافه کردن قابلیت کلیک راست برای حذف عناصر
+        editor.on('contextmenu', function(e) {
+          const target = e.target;
+          if (target.tagName === 'IMG' || 
+              target.closest('.smart-gallery') || 
+              target.tagName === 'P' ||
+              target.tagName === 'A' ||
+              target.tagName === 'BLOCKQUOTE' ||
+              target.tagName === 'UL' ||
+              target.tagName === 'OL' ||
+              target.tagName === 'H1' ||
+              target.tagName === 'H2' ||
+              target.tagName === 'H3' ||
+              target.tagName === 'H4' ||
+              target.tagName === 'H5' ||
+              target.tagName === 'H6' ||
+              target.closest('figure')) {
+            e.preventDefault();
+            showContextMenu(e, editor, target);
+          }
+        });
+      }
+    });
+
+    // تابع آپلود تصویر
+    function uploadImageFile(file, editor) {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/admin/articles/editor-upload', true);
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              const result = JSON.parse(xhr.responseText);
+              if (result.location) {
+                editor.insertContent('<img src="' + result.location + '" alt="تصویر" style="max-width: 100%; height: auto; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 6px 18px rgba(0,0,0,0.06); margin: 12px 0;">');
+              }
+            } catch (e) {
+              console.error('خطا در پردازش پاسخ سرور');
+            }
+          } else {
+            console.error('خطا در آپلود تصویر (کد: ' + xhr.status + ')');
+          }
+        }
+      };
+      
+      xhr.onerror = function() {
+        console.error('خطا در اتصال به سرور');
+      };
+      
+      xhr.send(formData);
+    }
+
+    // تابع ایجاد گالری هوشمند
+    function createSmartGallery(editor) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.multiple = true;
+      input.style.display = 'none';
+      
+      input.onchange = function(e) {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        
+        let uploadedCount = 0;
+        const galleryImages = [];
+        
+        files.forEach((file, index) => {
+          const formData = new FormData();
+          formData.append('file', file);
+          
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/admin/articles/editor-upload', true);
+          xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+          
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              try {
+                const result = JSON.parse(xhr.responseText);
+                if (result.location) {
+                  galleryImages[index] = result.location;
+                  uploadedCount++;
+                  
+                  if (uploadedCount === files.length) {
+                    insertSmartGallery(editor, galleryImages);
+                  }
+                }
+              } catch (e) {
+                console.error('خطا در پردازش پاسخ سرور');
+              }
+            }
+          };
+          
+          xhr.onerror = function() {
+            console.error('خطا در اتصال به سرور');
+          };
+          
+          xhr.send(formData);
+        });
+      };
+      
+      document.body.appendChild(input);
+      input.click();
+      document.body.removeChild(input);
+    }
+
+    // تابع درج گالری هوشمند در ادیتور
+    function insertSmartGallery(editor, images) {
+      const validImages = images.filter(img => img); // حذف تصاویر خالی
+      if (validImages.length === 0) return;
+      
+      let galleryHTML = '<div class="smart-gallery" data-count="' + validImages.length + '">';
+      
+      validImages.forEach((imageSrc, index) => {
+        galleryHTML += '<div class="gallery-item">';
+        galleryHTML += '<img src="' + imageSrc + '" alt="تصویر ' + (index + 1) + '" data-index="' + index + '" />';
+        galleryHTML += '</div>';
+      });
+      
+      galleryHTML += '</div>';
+      editor.insertContent(galleryHTML);
+    }
+
+    // تابع نمایش منوی کلیک راست
+    function showContextMenu(e, editor, target) {
+      // حذف منوهای قبلی
+      const existingMenu = document.querySelector('.context-menu');
+      if (existingMenu) {
+        existingMenu.remove();
+      }
+      
+      // تشخیص نوع عنصر
+      let elementType = target.tagName;
+      if (target.closest('figure')) {
+        elementType = 'FIGURE';
+      } else if (target.closest('.smart-gallery')) {
+        elementType = 'GALLERY';
+      }
+      
+      // ایجاد منوی جدید
+      const menu = document.createElement('div');
+      menu.className = 'context-menu';
+      menu.style.cssText = `
+        position: fixed;
+        top: ${e.clientY}px;
+        left: ${e.clientX}px;
+        background: #fff;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        padding: 8px 0;
+        z-index: 10000;
+        min-width: 180px;
+        backdrop-filter: blur(10px);
+      `;
+      
+      // دکمه افزودن تصویر به گالری (اگر گالری است)
+      let addToGalleryBtn = null;
+      if (elementType === 'GALLERY') {
+        addToGalleryBtn = document.createElement('div');
+        addToGalleryBtn.innerHTML = '➕ افزودن تصویر به گالری';
+        addToGalleryBtn.style.cssText = `
+          padding: 12px 16px;
+          cursor: pointer;
+          color: #4f46e5;
+          font-weight: 600;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          border-bottom: 1px solid #f1f5f9;
+        `;
+        addToGalleryBtn.addEventListener('mouseenter', () => {
+          addToGalleryBtn.style.background = '#eef2ff';
+          addToGalleryBtn.style.transform = 'translateX(-4px)';
+        });
+        addToGalleryBtn.addEventListener('mouseleave', () => {
+          addToGalleryBtn.style.background = 'transparent';
+          addToGalleryBtn.style.transform = 'translateX(0)';
+        });
+        addToGalleryBtn.addEventListener('click', () => {
+          const galleryEl = target.closest('.smart-gallery');
+          if (galleryEl) {
+            appendImagesToExistingGallery(editor, galleryEl);
+          }
+          menu.remove();
+        });
+      }
+      
+      // دکمه حذف
+      const deleteBtn = document.createElement('div');
+      deleteBtn.innerHTML = '🗑️ حذف';
+      deleteBtn.style.cssText = `
+        padding: 12px 16px;
+        cursor: pointer;
+        color: #ef4444;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      `;
+      
+      deleteBtn.addEventListener('mouseenter', () => {
+        deleteBtn.style.background = '#fef2f2';
+        deleteBtn.style.transform = 'translateX(-4px)';
+      });
+      
+      deleteBtn.addEventListener('mouseleave', () => {
+        deleteBtn.style.background = 'transparent';
+        deleteBtn.style.transform = 'translateX(0)';
+      });
+      
+      deleteBtn.addEventListener('click', () => {
+        deleteElement(editor, target);
+        menu.remove();
+      });
+      
+      // دکمه کپی (برای لینک‌ها)
+      let copyBtn = null;
+      if (elementType === 'A') {
+        copyBtn = document.createElement('div');
+        copyBtn.innerHTML = '📋 کپی لینک';
+        copyBtn.style.cssText = `
+          padding: 12px 16px;
+          cursor: pointer;
+          color: #4f46e5;
+          font-weight: 600;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          border-bottom: 1px solid #f1f5f9;
+        `;
+        
+        copyBtn.addEventListener('mouseenter', () => {
+          copyBtn.style.background = '#f0f9ff';
+          copyBtn.style.transform = 'translateX(-4px)';
+        });
+        
+        copyBtn.addEventListener('mouseleave', () => {
+          copyBtn.style.background = 'transparent';
+          copyBtn.style.transform = 'translateX(0)';
+        });
+        
+        copyBtn.addEventListener('click', () => {
+          const linkUrl = target.href;
+          navigator.clipboard.writeText(linkUrl).then(() => {
+            showSuccessToast('لینک کپی شد!');
+          });
+          menu.remove();
+        });
+      }
+      
+      // دکمه انتخاب متن (برای متون)
+      let selectBtn = null;
+      if (['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'BLOCKQUOTE'].includes(elementType)) {
+        selectBtn = document.createElement('div');
+        selectBtn.innerHTML = '📝 انتخاب متن';
+        selectBtn.style.cssText = `
+          padding: 12px 16px;
+          cursor: pointer;
+          color: #059669;
+          font-weight: 600;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          border-bottom: 1px solid #f1f5f9;
+        `;
+        
+        selectBtn.addEventListener('mouseenter', () => {
+          selectBtn.style.background = '#f0fdf4';
+          selectBtn.style.transform = 'translateX(-4px)';
+        });
+        
+        selectBtn.addEventListener('mouseleave', () => {
+          selectBtn.style.background = 'transparent';
+          selectBtn.style.transform = 'translateX(0)';
+        });
+        
+        selectBtn.addEventListener('click', () => {
+          // انتخاب متن عنصر
+          const range = document.createRange();
+          range.selectNodeContents(target);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          menu.remove();
+        });
+      }
+      
+      // اضافه کردن دکمه‌ها به منو
+      if (addToGalleryBtn) menu.appendChild(addToGalleryBtn);
+      if (copyBtn) menu.appendChild(copyBtn);
+      if (selectBtn) menu.appendChild(selectBtn);
+      menu.appendChild(deleteBtn);
+      
+      document.body.appendChild(menu);
+      
+      // حذف منو هنگام کلیک خارج از آن
+      setTimeout(() => {
+        document.addEventListener('click', function removeMenu() {
+          menu.remove();
+          document.removeEventListener('click', removeMenu);
+        });
+      }, 100);
+    }
+
+    // افزودن تصویر به گالری موجود (از طریق منوی راست‌کلیک)
+    function appendImagesToExistingGallery(editor, galleryEl) {
+      const doc = galleryEl.ownerDocument || document;
+      const input = doc.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.multiple = true;
+      input.style.display = 'none';
+
+      input.onchange = function(e) {
+        const files = Array.from(e.target.files || []);
+        if (!files.length) return;
+
+        let uploadedCount = 0;
+        const newImages = [];
+
+        files.forEach((file, index) => {
+          const formData = new FormData();
+          formData.append('file', file);
+
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', '/admin/articles/editor-upload', true);
+          xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              try {
+                const result = JSON.parse(xhr.responseText);
+                if (result.location) {
+                  newImages[index] = result.location;
+                  uploadedCount++;
+
+                  if (uploadedCount === files.length) {
+                    // افزودن به گالری داخل iframe
+                    newImages.filter(Boolean).forEach((src) => {
+                      const wrap = doc.createElement('div');
+                      wrap.className = 'gallery-item';
+                      const img = doc.createElement('img');
+                      img.src = src;
+                      img.alt = 'تصویر';
+                      wrap.appendChild(img);
+                      galleryEl.appendChild(wrap);
+                    });
+                    // بروزرسانی شمارش جهت چیدمان واکنش‌گرا
+                    const current = Number(galleryEl.getAttribute('data-count') || galleryEl.querySelectorAll('.gallery-item').length);
+                    const updated = current + newImages.filter(Boolean).length;
+                    galleryEl.setAttribute('data-count', Math.min(updated, 9));
+                    showSuccessToast('تصاویر به گالری اضافه شد');
+                  }
+                }
+              } catch (_e) {}
+            }
+          };
+
+          xhr.onerror = function() { console.error('Upload error'); };
+          xhr.send(formData);
+        });
+      };
+
+      (doc.body || document.body).appendChild(input);
+      input.click();
+      (doc.body || document.body).removeChild(input);
+    }
+
+    // تابع حذف عنصر
+    function deleteElement(editor, target) {
+      let elementToDelete = target;
+      let elementType = target.tagName;
+      
+      // اگر داخل figure است، کل figure را حذف کن
+      if (target.closest('figure')) {
+        elementToDelete = target.closest('figure');
+        elementType = 'FIGURE';
+      }
+      
+      // اگر داخل smart-gallery است، کل گالری را حذف کن
+      if (target.closest('.smart-gallery')) {
+        elementToDelete = target.closest('.smart-gallery');
+        elementType = 'GALLERY';
+      }
+      
+      // نمایش پیام تأیید بر اساس نوع عنصر
+      let confirmMessage = '';
+      switch(elementType) {
+        case 'IMG':
+          confirmMessage = 'آیا می‌خواهید این تصویر را حذف کنید؟';
+          break;
+        case 'A':
+          confirmMessage = 'آیا می‌خواهید این لینک را حذف کنید؟';
+          break;
+        case 'BLOCKQUOTE':
+          confirmMessage = 'آیا می‌خواهید این نقل‌قول را حذف کنید؟';
+          break;
+        case 'UL':
+        case 'OL':
+          confirmMessage = 'آیا می‌خواهید این لیست را حذف کنید؟';
+          break;
+        case 'H1':
+        case 'H2':
+        case 'H3':
+        case 'H4':
+        case 'H5':
+        case 'H6':
+          confirmMessage = 'آیا می‌خواهید این عنوان را حذف کنید؟';
+          break;
+        case 'FIGURE':
+          confirmMessage = 'آیا می‌خواهید این تصویر را حذف کنید؟';
+          break;
+        case 'GALLERY':
+          confirmMessage = 'آیا می‌خواهید کل گالری را حذف کنید؟';
+          break;
+        case 'P':
+          // برای پاراگراف‌های خالی، بدون تأیید حذف کن
+          if (target.textContent.trim() === '' || target.textContent.trim() === '\u00A0') {
+            target.remove();
+            return;
+          }
+          confirmMessage = 'آیا می‌خواهید این پاراگراف را حذف کنید؟';
+          break;
+        default:
+          confirmMessage = 'آیا می‌خواهید این عنصر را حذف کنید؟';
+      }
+      
+      // نمایش پیام تأیید و حذف عنصر
+      if (confirm(confirmMessage)) {
+        elementToDelete.remove();
+        
+        // نمایش پیام موفقیت
+        showSuccessToast('عنصر با موفقیت حذف شد!');
+      }
+    }
+    
+    // تابع نمایش پیام موفقیت
+    function showSuccessToast(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 10001;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      `;
+      toast.textContent = message;
+      
+      document.body.appendChild(toast);
+      
+      // انیمیشن ورود
+      setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+      }, 100);
+      
+      // حذف خودکار بعد از 3 ثانیه
+      setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // نمایش پیام موفقیت
+    const successMsg = document.getElementById('successMsg');
+    if (successMsg) {
+      successMsg.style.display = 'block';
+      setTimeout(() => {
+        successMsg.style.opacity = '0';
+        setTimeout(() => successMsg.style.display = 'none', 300);
+      }, 5000);
+    }
+
+    // counters
+    const form = document.querySelector('.admin-article-form');
+    const titleInput = form.querySelector('input[name="title"]');
+    const summaryInput = form.querySelector('input[name="summary"]');
+    const titleCount = document.getElementById('titleCount');
+    const summaryCount = document.getElementById('summaryCount');
+    function bindCounter(input, label){ const update=()=>label.textContent = (input.value||'').length; input.addEventListener('input', update); update(); }
+    bindCounter(titleInput, titleCount); bindCounter(summaryInput, summaryCount);
+
+    // image previews
+    const coverInput = document.getElementById('coverInput');
+    const coverPreview = document.getElementById('coverPreview');
+    if (coverInput) coverInput.addEventListener('change', (e)=>{
+      coverPreview.innerHTML='';
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const img = document.createElement('img'); img.className = 'img-preview';
+      img.src = URL.createObjectURL(f); coverPreview.appendChild(img);
+    });
+    
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <% var IS_NEWS = (typeof isNews !== 'undefined' && isNews); %>
+  <title><%= IS_NEWS ? 'اخبار انجمن' : 'مقالات' %></title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/public/articles.css" />
+</head>
+<body class="articles-page">
+  <!-- Header copied from homepage -->
+  <nav class="mainNav mainNav--light">
+    <div class="mainNav__logo">
+      <span class="logo-icon">🔭</span>
+      <span class="logo-text">BEHBAHAN ASTRO</span>
+    </div>
+    <div class="mainNav__links">
+      <a href="/" class="mainNav__link">صفحه اصلی</a>
+      <a href="/articles" class="mainNav__link">مقالات</a>
+      <a href="#courses" class="mainNav__link">دوره‌ها</a>
+      <a href="#team" class="mainNav__link">تیم</a>
+      <a href="#contact" class="mainNav__link">تماس</a>
+    </div>
+    <div class="mainNav__social">
+      <a href="#" class="social-icon" title="تلگرام">📱</a>
+      <a href="#" class="social-icon" title="واتساپ">📞</a>
+      <a href="#" class="social-icon" title="اینستاگرام">📷</a>
+    </div>
+    <div class="mainNav__icon"></div>
+  </nav>
+
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="breadcrumb">
+        <a href="/">صفحه اصلی</a>
+        <span class="crumb-sep">›</span>
+        <span class="current"><%= IS_NEWS ? 'اخبار انجمن' : 'مقالات' %></span>
+      </nav>
+      <h1 class="page-title"><%= IS_NEWS ? 'اخبار انجمن' : 'همه مقالات' %></h1>
+      <p class="page-subtitle"><%= IS_NEWS ? 'خبرها و اطلاعیه‌های انجمن' : 'آخرین مطالب نجومی و آموزشی انجمن' %></p>
+      <a class="back-home" href="/">بازگشت به صفحه اصلی</a>
+    </div>
+  </section>
+  <section class="featured-articles">
+    <div class="container">
+      <div class="section-header">
+        <h2><%= IS_NEWS ? 'اخبار' : 'همه مقالات' %></h2>
+        <p><%= IS_NEWS ? 'اطلاعیه‌ها و خبرهای مهم انجمن' : 'جدیدترین مطالب نجومی و علمی انجمن' %></p>
+      </div>
+
+      
+      <div class="articles-grid">
+        <% articles.forEach(a => { %>
+          <a class="article-card article-card--link" href="/<%= IS_NEWS ? 'news' : 'articles' %>/<%= a.id %>">
+            <% if (a.image) { %>
+              <div class="article-image">
+                <img src="/<%= a.image %>" alt="<%= a.title %>">
+              </div>
+            <% } %>
+            <div class="article-content">
+              <div class="article-meta">
+                <span class="article-date">🗓 <%= new Date(a.createdAt).toLocaleDateString('fa-IR') %></span>
+              </div>
+              <h3 class="article-title"><%= a.title %></h3>
+              <p class="article-summary"><%= a.summary %></p>
+              <span class="read-more">ادامه مطلب →</span>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer copied from homepage -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>انجمن نجوم بهبهان</h3>
+          <p>کاوش در اعماق آسمان و کشف رمز و رازهای کیهان</p>
+        </div>
+        <div class="footer-section">
+          <h4>دسترسی سریع</h4>
+          <ul class="footer-links">
+            <li><a href="#">درباره ما</a></li>
+            <li><a href="/articles">مقالات</a></li>
+            <li><a href="#">دوره‌ها</a></li>
+            <li><a href="#">تماس</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>شبکه‌های اجتماعی</h4>
+          <div class="social-links">
+            <a href="#" class="social-link">📱 تلگرام</a>
+            <a href="#" class="social-link">📞 واتساپ</a>
+            <a href="#" class="social-link">📷 اینستاگرام</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; ۱۴۰۳ انجمن نجوم بهبهان. تمامی حقوق محفوظ است.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/main.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id        Int            @id @default(autoincrement())
+  title     String
+  summary   String
+  content   String
+  image     String?
+  type      PostType       @default(ARTICLE)
+  featured  Boolean        @default(false)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  images    ArticleImage[]
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model ArticleImage {
+  id        Int      @id @default(autoincrement())
+  articleId Int
+  path      String
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
+enum PostType {
+  ARTICLE
+  NEWS
+}

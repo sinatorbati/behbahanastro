@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; max-width: 420px; margin: 3rem auto; padding: 0 1rem; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; }
+    label { display:block; margin-top: .5rem; }
+    input[type=text], input[type=password] { width: 100%; padding: .5rem; }
+    .btn { margin-top: .75rem; background: #0b5; color: #fff; border: 0; padding: .5rem .8rem; cursor: pointer; border-radius: 4px; }
+    .error { color: #b00; margin-top: .5rem; }
+  </style>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="card">
+    <h1>Admin Login</h1>
+    <% if (error) { %><div class="error"><%= error %></div><% } %>
+    <form action="/admin/login" method="POST">
+      <label>Username</label>
+      <input type="text" name="username" required />
+      <label>Password</label>
+      <input type="password" name="password" required />
+      <button class="btn" type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
+
+

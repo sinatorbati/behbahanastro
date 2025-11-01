@@ -1,0 +1,30 @@
+{
+  "name": "bebehanastro",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "build:prisma": "prisma generate",
+    "migrate": "prisma migrate dev --name init",
+    "seed": "node prisma/seed.cjs",
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.14.0",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "multer": "^2.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prisma": "^6.14.0"
+  }
+}
