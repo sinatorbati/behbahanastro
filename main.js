@@ -203,8 +203,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Stats counter animation
     const statNumbers = document.querySelectorAll('.stat-number');
+    
+    // Convert Persian/Arabic digits to English digits
+    function persianToEnglish(str) {
+        const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        let result = str;
+        persianDigits.forEach((persian, index) => {
+            result = result.replace(new RegExp(persian, 'g'), englishDigits[index]);
+        });
+        // Extract only numbers and + sign
+        const numberMatch = result.match(/\d+/);
+        return numberMatch ? parseInt(numberMatch[0], 10) : 0;
+    }
+
     statNumbers.forEach(stat => {
-        const finalNumber = stat.textContent;
+        const originalText = stat.textContent;
+        const finalNumber = persianToEnglish(originalText);
         const observer = new IntersectionObserver(function(entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -228,7 +243,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentValue = finalValue;
                 clearInterval(timer);
             }
-            element.textContent = Math.floor(currentValue) + '+';
+            // Convert back to Persian digits for display
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            const englishStr = Math.floor(currentValue).toString();
+            const persianStr = englishStr.split('').map(d => persianDigits[parseInt(d)]).join('');
+            element.textContent = persianStr + '+';
         }, 16);
     }
 
@@ -237,9 +256,75 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileNavLinks = document.querySelector('.mainNav__links');
     
     if (mobileMenuIcon && mobileNavLinks) {
+        let isOpen = false;
+        
         mobileMenuIcon.addEventListener('click', function() {
+            isOpen = !isOpen;
             mobileNavLinks.classList.toggle('active');
             this.classList.toggle('active');
+            this.setAttribute('aria-expanded', isOpen);
+            
+            // Prevent body scroll when menu is open (mobile only)
+            if (window.innerWidth < 800) {
+                if (isOpen) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+
+        // Close menu when clicking outside (mobile only)
+        document.addEventListener('click', function(e) {
+            if (isOpen && window.innerWidth < 800) {
+                if (!mobileNavLinks.contains(e.target) && !mobileMenuIcon.contains(e.target)) {
+                    isOpen = false;
+                    mobileNavLinks.classList.remove('active');
+                    mobileMenuIcon.classList.remove('active');
+                    mobileMenuIcon.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+
+        // Close menu on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isOpen) {
+                isOpen = false;
+                mobileNavLinks.classList.remove('active');
+                mobileMenuIcon.classList.remove('active');
+                mobileMenuIcon.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+                mobileMenuIcon.focus();
+            }
+        });
+
+        // Close menu when clicking a link (mobile only)
+        mobileNavLinks.querySelectorAll('.mainNav__link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 800 && isOpen) {
+                    isOpen = false;
+                    mobileNavLinks.classList.remove('active');
+                    mobileMenuIcon.classList.remove('active');
+                    mobileMenuIcon.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                if (window.innerWidth >= 800 && isOpen) {
+                    isOpen = false;
+                    mobileNavLinks.classList.remove('active');
+                    mobileMenuIcon.classList.remove('active');
+                    mobileMenuIcon.setAttribute('aria-expanded', 'false');
+                    document.body.style.overflow = '';
+                }
+            }, 250);
         });
     }
 

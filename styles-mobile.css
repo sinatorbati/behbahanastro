@@ -1,0 +1,370 @@
+/* Mobile-First Responsive CSS - Progressive Enhancement */
+
+/* ===== BREAKPOINT 1: 480px (Large Phones) ===== */
+@media (min-width: 30rem) { /* 480px */
+  .mainHeading__title {
+    font-size: 2rem;
+  }
+
+  .section-header h2 {
+    font-size: 2rem;
+  }
+
+  .stats {
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    flex: 1;
+    min-width: 8rem;
+  }
+
+  .about-content h3 {
+    font-size: 1.75rem;
+  }
+
+  .article-content h3 {
+    font-size: 1.375rem;
+  }
+}
+
+/* ===== BREAKPOINT 2: 768px (Tablets) ===== */
+@media (min-width: 48rem) { /* 768px */
+  html {
+    font-size: 100%; /* Keep 16px base */
+  }
+
+  .mainNav {
+    padding: 0 var(--spacing-lg);
+    height: 5rem;
+  }
+
+  .mainNav__logo {
+    font-size: 1.125rem;
+  }
+
+  .mainNav__links {
+    position: static;
+    flex-direction: row;
+    display: flex !important;
+    transform: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .mainNav__link {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  .mainNav__icon {
+    display: none;
+  }
+
+  .mainNav__social {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  .social-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    font-size: 1.125rem;
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .mainHeading {
+    padding: 8rem var(--spacing-lg) var(--spacing-xl);
+  }
+
+  .mainHeading__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    align-items: center;
+  }
+
+  .mainHeading__text {
+    padding: var(--spacing-xl);
+  }
+
+  .mainHeading__title {
+    font-size: 2.5rem;
+  }
+
+  .mainHeading__description {
+    font-size: 1.125rem;
+  }
+
+  .mainHeading__image {
+    display: block;
+  }
+
+  .mainHeading__image img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  }
+
+  .stats {
+    flex-direction: row;
+    gap: var(--spacing-lg);
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+  }
+
+  .container {
+    padding: 0 var(--spacing-lg);
+  }
+
+  .section-header {
+    margin-bottom: 4rem;
+  }
+
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  .section-header p {
+    font-size: 1.125rem;
+  }
+
+  .about-item {
+    flex-direction: row;
+    gap: var(--spacing-xl);
+  }
+
+  .about-item.reverse {
+    flex-direction: row-reverse;
+  }
+
+  .about-image {
+    flex: 1;
+  }
+
+  .about-image img {
+    height: 20rem;
+    object-fit: cover;
+  }
+
+  .about-content {
+    flex: 1;
+  }
+
+  .about-content h3 {
+    font-size: 2rem;
+  }
+
+  .about-content p {
+    font-size: 1.125rem;
+  }
+
+  .articles-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+  }
+
+  .article-image {
+    height: 16rem;
+  }
+
+  .article-content {
+    padding: var(--spacing-lg);
+  }
+
+  .article-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .package-content {
+    flex-direction: row;
+    gap: var(--spacing-xl);
+    align-items: center;
+  }
+
+  .package-text {
+    flex: 1;
+  }
+
+  .package-text h2 {
+    font-size: 2rem;
+  }
+
+  .package-text p {
+    font-size: 1.125rem;
+  }
+
+  .package-image {
+    flex: 1;
+  }
+
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+  }
+}
+
+/* ===== BREAKPOINT 3: 1024px (Desktop) ===== */
+@media (min-width: 64rem) { /* 1024px */
+  .mainNav {
+    padding: 0 2.5rem;
+  }
+
+  .mainNav__links {
+    gap: var(--spacing-lg);
+  }
+
+  .mainHeading {
+    padding: 10rem 2.5rem var(--spacing-xl);
+  }
+
+  .mainHeading__title {
+    font-size: 3rem;
+  }
+
+  .mainHeading__description {
+    font-size: 1.25rem;
+  }
+
+  .section-header h2 {
+    font-size: 3rem;
+  }
+
+  .section-header p {
+    font-size: 1.25rem;
+  }
+
+  .about-grid {
+    gap: 6rem;
+  }
+
+  .about-item {
+    gap: 6rem;
+  }
+
+  .about-image img {
+    height: 25rem;
+  }
+
+  .about-content h3 {
+    font-size: 2.25rem;
+  }
+
+  .about-content p {
+    font-size: 1.25rem;
+  }
+
+  .articles-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+
+  .article-image {
+    height: 20rem;
+  }
+
+  .article-content {
+    padding: 2rem;
+  }
+
+  .article-content h3 {
+    font-size: 1.625rem;
+  }
+
+  .article-content p {
+    font-size: 1rem;
+  }
+
+  .package-text h2 {
+    font-size: 2.75rem;
+  }
+
+  .package-text p {
+    font-size: 1.25rem;
+  }
+
+  .footer-content {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== Hover Effects (Desktop Only) ===== */
+@media (hover: hover) and (pointer: fine) {
+  .article-card:hover {
+    transform: translateY(-0.5rem);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .mainNav__link:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--color-primary);
+  }
+
+  .read-more:hover,
+  .view-all-btn:hover,
+  .package-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  .footer-links a:hover,
+  .social-link:hover {
+    color: var(--color-primary);
+  }
+}
+
+/* ===== Touch Device Optimizations ===== */
+@media (hover: none) and (pointer: coarse) {
+  .mainNav__link,
+  .read-more,
+  .view-all-btn,
+  .package-btn,
+  .footer-links a,
+  .social-link {
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+  }
+}
+
+/* ===== Reduced Motion Support ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .mainNav,
+  .footer {
+    display: none;
+  }
+
+  .mainHeading {
+    min-height: auto;
+    page-break-after: always;
+  }
+
+  section {
+    page-break-inside: avoid;
+  }
+}
+
