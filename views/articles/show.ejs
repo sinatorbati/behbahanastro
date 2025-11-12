@@ -10,6 +10,9 @@
     .back-arrow { position: absolute; top: 110px; left: 20px; z-index: 10; }
     .back-arrow a { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.05); border: 1px solid #e5e7eb; padding: 8px 12px; border-radius: 999px; color: #111827; text-decoration: none; }
     .back-arrow a:hover { background: #eef2ff; color: #3730a3; border-color: #c7d2fe; }
+    /* Dark theme: ensure back button is readable and does not turn white on hover */
+    html[data-theme="dark"] .back-arrow a { background: #0b1020; border-color: #374151; color: #e5e7eb; }
+    html[data-theme="dark"] .back-arrow a:hover { background: #111827; border-color: #4b5563; color: #c7d2fe; }
     /* Lightbox */
     .lb__overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
     .lb__overlay.is-open { display: flex; }
@@ -52,39 +55,39 @@
     </div>
     
     <div class="mainNav__social">
+      <button class="theme-toggle" id="theme-toggle" aria-label="تغییر حالت رنگ" aria-pressed="false" title="تغییر حالت روشن/تاریک">🌙</button>
       <a href="#" class="social-icon" title="تلگرام">📱</a>
       <a href="#" class="social-icon" title="واتساپ">📞</a>
       <a href="#" class="social-icon" title="اینستاگرام">📷</a>
     </div>
     
-    <div class="mainNav__icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-         <g data-name="Layer 2" fill="#9197AE">
-            <g data-name="menu-2">
-               <rect
-                  width="24"
-                  height="24"
-                  transform="rotate(180 12 12)"
-                  opacity="0"
-               />
-               <circle cx="4" cy="12" r="1" />
-               <rect x="7" y="11" width="14" height="2" rx=".94" ry=".94" />
-               <rect x="3" y="16" width="18" height="2" rx=".94" ry=".94" />
-               <rect x="3" y="6" width="18" height="2" rx=".94" ry=".94" />
-            </g>
-         </g>
-      </svg>
+    <!-- Mobile-only theme toggle placed next to hamburger -->
+    <div class="mainNav__mobile-controls">
+      <button class="theme-toggle theme-toggle--mobile" aria-label="تغییر حالت رنگ" aria-pressed="false" title="تغییر حالت روشن/تاریک">🌙</button>
+      <button class="mainNav__icon" type="button" aria-label="منوی موبایل" aria-expanded="false">
+        <span class="mainNav__icon-bars" aria-hidden="true">
+          <span class="bar bar--top"></span>
+          <span class="bar bar--middle"></span>
+          <span class="bar bar--bottom"></span>
+        </span>
+        <span class="sr-only">باز کردن منو</span>
+      </button>
     </div>
   </nav>
 
-  <div class="back-arrow"><a href="/articles">← بازگشت</a></div>
+  <% var isNewsPage = (typeof isNews !== 'undefined') ? Boolean(isNews) : (article && article.type === 'NEWS'); %>
+  <div class="back-arrow">
+    <a href="<%= isNewsPage ? '/news' : '/articles' %>">
+      ← بازگشت به <%= isNewsPage ? 'اخبار انجمن' : 'مقالات' %>
+    </a>
+  </div>
 
   <section class="article-hero" style="padding-top:120px">
     <div class="container">
       <nav class="breadcrumbs" aria-label="breadcrumb">
         <a href="/">صفحه اصلی</a>
         <span class="crumb-sep">›</span>
-        <a href="/articles">مقالات</a>
+        <a href="<%= isNewsPage ? '/news' : '/articles' %>"><%= isNewsPage ? 'اخبار انجمن' : 'مقالات' %></a>
       </nav>
       <h1 class="page-title"><%= article.title %></h1>
       <p class="page-subtitle"><%= article.summary %></p>
@@ -118,10 +121,10 @@
         <div class="footer-section">
           <h4>دسترسی سریع</h4>
           <ul class="footer-links">
-            <li><a href="#">درباره ما</a></li>
+            <li><a href="/#about">درباره ما</a></li>
             <li><a href="/articles">مقالات</a></li>
-            <li><a href="#">دوره‌ها</a></li>
-            <li><a href="#">تماس</a></li>
+            <li><a href="/#courses">دوره‌ها</a></li>
+            <li><a href="/#contact">تماس</a></li>
           </ul>
         </div>
         <div class="footer-section">
@@ -141,12 +144,13 @@
   <!-- Lightbox markup -->
   <div class="lb__overlay" id="lightbox" aria-hidden="true">
     <div class="lb__content">
-      <button class="lb__nav lb__prev" aria-label="قبلی" id="lbPrev">❮</button>
+      <button class="lb__nav lb__next" aria-label="بعدی" id="lbNext">❮</button>
       <img class="lb__img" id="lbImg" alt="" />
-      <button class="lb__nav lb__next" aria-label="بعدی" id="lbNext">❯</button>
+      <button class="lb__nav lb__prev" aria-label="قبلی" id="lbPrev">❯</button>
       <button class="lb__close" aria-label="بستن" id="lbClose">✕</button>
     </div>
   </div>
+  <script src="/main.js" defer></script>
   <script>
     (function() {
       // build share links on client to avoid server req dependency

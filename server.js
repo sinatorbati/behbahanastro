@@ -258,7 +258,7 @@ app.get('/articles/:id', async (req, res) => {
   const id = Number(req.params.id);
   const article = await prisma.article.findUnique({ where: { id }, include: { images: true } });
   if (!article) return res.status(404).send('Not found');
-  res.render('articles/show', { article });
+  res.render('articles/show', { article, isNews: article.type === 'NEWS' });
 });
 
 // News detail (same template)
@@ -266,7 +266,7 @@ app.get('/news/:id', async (req, res) => {
   const id = Number(req.params.id);
   const article = await prisma.article.findUnique({ where: { id }, include: { images: true } });
   if (!article) return res.status(404).send('Not found');
-  res.render('articles/show', { article });
+  res.render('articles/show', { article, isNews: true });
 });
 
 async function start() {

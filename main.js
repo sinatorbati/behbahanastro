@@ -1,6 +1,55 @@
 // ===== ADVANCED ANIMATIONS & INTERACTIONS =====
 
 document.addEventListener('DOMContentLoaded', function() {
+    // ========== THEME: Light/Dark ==========
+    (function initTheme() {
+        const root = document.documentElement;
+        const toggleBtns = document.querySelectorAll('.theme-toggle');
+        const storageKey = 'theme';
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const saved = localStorage.getItem(storageKey);
+        const initialTheme = saved ? saved : (prefersDark ? 'dark' : 'light');
+        applyTheme(initialTheme);
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                root.setAttribute('data-theme', 'dark');
+                toggleBtns.forEach(btn => {
+                    btn.textContent = '☀️';
+                    btn.setAttribute('aria-pressed', 'true');
+                    btn.title = 'حالت روشن';
+                });
+            } else {
+                root.removeAttribute('data-theme');
+                toggleBtns.forEach(btn => {
+                    btn.textContent = '🌙';
+                    btn.setAttribute('aria-pressed', 'false');
+                    btn.title = 'حالت تاریک';
+                });
+            }
+        }
+
+        if (toggleBtns.length) {
+            const onClick = function() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const next = isDark ? 'light' : 'dark';
+                applyTheme(next);
+                try { localStorage.setItem(storageKey, next); } catch(_) {}
+            };
+            toggleBtns.forEach(btn => btn.addEventListener('click', onClick));
+        }
+
+        // Live update if user OS preference changes (optional)
+        if (window.matchMedia) {
+            const mq = window.matchMedia('(prefers-color-scheme: dark)');
+            mq.addEventListener?.('change', e => {
+                const savedTheme = localStorage.getItem(storageKey);
+                if (!savedTheme) {
+                    applyTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+        }
+    })();
     
     // Smooth scrolling for navigation links
     const navLinks = document.querySelectorAll('.mainNav__link');
@@ -45,16 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(el);
     });
 
-    // Parallax effect for background elements
-    window.addEventListener('scroll', function() {
-        const scrolled = window.pageYOffset;
-        const parallaxElements = document.querySelectorAll('.about-society::before, .featured-articles::before, .package-section::before');
-        
-        parallaxElements.forEach(element => {
-            const speed = 0.5;
-            element.style.transform = `translateY(${scrolled * speed}px)`;
-        });
-    });
+    // Removed broken parallax on pseudo-elements for performance and correctness
 
     // Enhanced hover effects for cards
     const cards = document.querySelectorAll('.article-card, .about-image, .package-image');
@@ -345,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(item);
     });
 
-    console.log('🚀 Advanced animations and interactions loaded successfully!');
+    // console.log removed for production
 
     // ===== Latest 4 Articles on Homepage =====
     const latestContainer = document.getElementById('latest-articles');
